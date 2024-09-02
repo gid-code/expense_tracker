@@ -1,10 +1,21 @@
+import 'package:expense_tracker/providers/app_provider.dart';
 import 'package:expense_tracker/screens/router.dart';
 import 'package:expense_tracker/theme.dart';
 import 'package:expense_tracker/util.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final appProvider = AppProvider();
+  await appProvider.initializeApp();
+
+  runApp(
+    ChangeNotifierProvider.value(
+      value: appProvider,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,7 +29,7 @@ class MyApp extends StatelessWidget {
 
     MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Expense Tracker',
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
       // theme: ThemeData(
       //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

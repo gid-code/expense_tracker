@@ -1,7 +1,23 @@
+import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:expense_tracker/providers/app_provider.dart';
 
-class ExpensesScreen extends StatelessWidget {
+class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
+
+  @override
+  State<ExpensesScreen> createState() => _ExpensesScreenState();
+}
+
+class _ExpensesScreenState extends State<ExpensesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().fetchExpenditure();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +36,39 @@ class ExpensesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: expenses.length,
-      itemBuilder: (context, index) => ExpenseCategoryCard(category: expenses[index]),
+    return Consumer<AppProvider>(
+      builder: (context, appProvider, child) {
+        if (appProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (appProvider.errorMessage != null) {
+          return Center(child: Text(appProvider.errorMessage!));
+        } else if (appProvider.expenditureItems.isEmpty) {
+          return const Center(child: Text('No expenses found'));
+        } else {
+          // Group expenditure items by category
+          final groupedExpenses = groupExpensesByCategory(appProvider.expenditureItems);
+          return ListView.builder(
+            itemCount: groupedExpenses.length,
+            itemBuilder: (context, index) => ExpenseCategoryCard(category: groupedExpenses[index]),
+          );
+        }
+      },
     );
+  }
+
+  List<Map<String, dynamic>> groupExpensesByCategory(List<ExpenditureItem> expenses) {
+    final groupedExpenses = <String, List<ExpenditureItem>>{};
+    for (var expense in expenses) {
+      final category = expense.category ?? 'Uncategorized';
+      if (!groupedExpenses.containsKey(category)) {
+        groupedExpenses[category] = [];
+      }
+      groupedExpenses[category]!.add(expense);
+    }
+    return groupedExpenses.entries.map((entry) => {
+      'category': entry.key,
+      'items': entry.value,
+    }).toList();
   }
 }
 
@@ -42,8 +87,8 @@ class ExpenseCategoryCard extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         children: [
-          for (var item in category['items'])
-            ExpenseItemTile(item: item, color: getUniqueColor(item['name'])),
+          for (ExpenditureItem item in category['items'])
+            ExpenseItemTile(item: item, color: getUniqueColor(item.nameOfItem ?? '')),
         ],
       ),
     );
@@ -51,7 +96,7 @@ class ExpenseCategoryCard extends StatelessWidget {
 }
 
 class ExpenseItemTile extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final ExpenditureItem item;
   final Color color;
 
   const ExpenseItemTile({super.key, required this.item, required this.color});
@@ -66,11 +111,11 @@ class ExpenseItemTile extends StatelessWidget {
           color: color.withOpacity(0.2),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(getIconForItem(item['name']), color: color),
+        child: Icon(getIconForItem(item.nameOfItem ?? ''), color: color),
       ),
-      title: Text(item['name']),
+      title: Text(item.nameOfItem ?? ''),
       trailing: Text(
-        '\$${item['amount'].toStringAsFixed(2)}',
+        '\$${item.estimatedAmount?.toStringAsFixed(2) ?? '0.00'}',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: color,

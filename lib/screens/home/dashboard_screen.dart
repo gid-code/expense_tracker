@@ -1,5 +1,7 @@
+import 'package:expense_tracker/providers/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -10,85 +12,99 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().fetchAllFinanceData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned(
-          top: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 260,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(60),
-                bottomRight: Radius.circular(60),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 50,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Welcome,',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2,),
-                      Text(
-                        'User!',
-                        style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.notifications, color: Theme.of(context).colorScheme.onPrimary),
-                    onPressed: () {
-                      // Handle notification icon tap
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              _buildSummaryCard(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 24),
-                      _buildIncomeExpenseChart(context),
-                      const SizedBox(height: 24),
-                      _buildRevenueHistory(context),
-                      const SizedBox(height: 24),
-                      _buildRecentTransactions(context),
-                      const SizedBox(height: 24),
-                      _buildQuickActions(context),
-                    ],
+    return Consumer<AppProvider>(
+      builder: (context, appProvider, child) {
+        return Stack(
+          children: [
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 260,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(60),
+                    bottomRight: Radius.circular(60),
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 50,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Welcome,',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2,),
+                          Text(
+                            'User!',
+                            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.notifications, color: Theme.of(context).colorScheme.onPrimary),
+                        onPressed: () {
+                          // Handle notification icon tap
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildSummaryCard(context, appProvider),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          _buildIncomeExpenseChart(context, appProvider),
+                          const SizedBox(height: 24),
+                          _buildRevenueHistory(context, appProvider),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (appProvider.isLoading)
+              Container(
+                color: Colors.black.withOpacity(0.5),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context) {
+  Widget _buildSummaryCard(BuildContext context, AppProvider appProvider) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -106,7 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '\$5,240.00',
+              '\$${appProvider.balance.toStringAsFixed(2)}',
               style: textTheme.headlineMedium?.copyWith(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -116,8 +132,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildMiniSummary(context, 'Income', '\$3,500', Colors.white),
-                _buildMiniSummary(context, 'Expenses', '\$2,260', Colors.white70),
+                _buildMiniSummary(context, 'Income', '\$${appProvider.totalIncome.toStringAsFixed(2)}', Colors.white),
+                _buildMiniSummary(context, 'Expenses', '\$${appProvider.totalExpenditure.toStringAsFixed(2)}', Colors.white70),
               ],
             ),
           ],
@@ -163,7 +179,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildIncomeExpenseChart(BuildContext context) {
+  Widget _buildIncomeExpenseChart(BuildContext context, AppProvider appProvider) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -181,7 +197,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
-                  maxY: 4000,
+                  maxY: appProvider.totalIncome > appProvider.totalExpenditure
+                      ? appProvider.totalIncome
+                      : appProvider.totalExpenditure,
                   barTouchData: BarTouchData(enabled: false),
                   titlesData: FlTitlesData(
                     show: true,
@@ -212,13 +230,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     BarChartGroupData(
                       x: 0,
                       barRods: [
-                        BarChartRodData(toY: 3500, color: colorScheme.primary),
+                        BarChartRodData(toY: appProvider.totalIncome, color: colorScheme.primary),
                       ],
                     ),
                     BarChartGroupData(
                       x: 1,
                       barRods: [
-                        BarChartRodData(toY: 2260, color: colorScheme.secondary),
+                        BarChartRodData(toY: appProvider.totalExpenditure, color: colorScheme.secondary),
                       ],
                     ),
                   ],
@@ -231,18 +249,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildRevenueHistory(BuildContext context) {
+  Widget _buildRevenueHistory(BuildContext context, AppProvider appProvider) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
-
-    // Sample revenue data
-    final revenueData = [
-      {'name': 'Salary', 'amount': 3500},
-      {'name': 'Freelance Work', 'amount': 800},
-      {'name': 'Investment Dividends', 'amount': 300},
-      {'name': 'Rental Income', 'amount': 1200},
-      {'name': 'Side Project', 'amount': 500},
-    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +263,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ElevatedButton.icon(
               onPressed: () => _showAddRevenueDialog(context),
               icon: Icon(Icons.add, color: colorScheme.onPrimary),
-              label: Text('Add New'),
+              label: const Text('Add New'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: colorScheme.primary,
                 foregroundColor: colorScheme.onPrimary,
@@ -263,24 +272,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         const SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: revenueData.length,
-          itemBuilder: (context, index) {
-            final data = revenueData[index];
-            return ListTile(
-              title: Text(data['name'] as String, style: textTheme.titleMedium),
-              trailing: Text(
-                '\$${data['amount']}',
-                style: textTheme.titleMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+        if (appProvider.incomeItems.isEmpty)
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.account_balance_wallet,
+                  size: 64,
+                  color: colorScheme.primary.withOpacity(0.5),
                 ),
-              ),
-            );
-          },
-        ),
+                const SizedBox(height: 16),
+                Text(
+                  'No revenue history yet',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tap "Add New" to record your first income',
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: appProvider.incomeItems.length,
+            itemBuilder: (context, index) {
+              final income = appProvider.incomeItems[index];
+              return ListTile(
+                title: Text(income.nameOfRevenue ?? 'Unknown', style: textTheme.titleMedium),
+                trailing: Text(
+                  'GHc ${income.amount?.toStringAsFixed(2) ?? '0.00'}',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
+          ),
       ],
     );
   }
@@ -293,98 +330,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add New Revenue'),
+          title: const Text('Add New Revenue'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameController,
-                decoration: InputDecoration(labelText: 'Revenue Name'),
+                decoration: const InputDecoration(labelText: 'Revenue Name'),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: amountController,
-                decoration: InputDecoration(labelText: 'Amount'),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: const InputDecoration(labelText: 'Amount'),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // TODO: Implement the logic to add the new revenue
-                print('New Revenue: ${nameController.text}, Amount: ${amountController.text}');
-                Navigator.of(context).pop();
+              onPressed: () async {
+                if (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
+                  final amount = double.tryParse(amountController.text);
+                  if (amount != null) {
+                    final appProvider = context.read<AppProvider>();
+                    await appProvider.addIncome(nameController.text, amount);
+                    if (appProvider.errorMessage == null) {
+                      if(context.mounted){
+                        Navigator.of(context).pop();
+                      }
+                    } else {
+                      if(context.mounted){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(appProvider.errorMessage!)),
+                        );
+                      }
+                    }
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please enter a valid amount')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill in all fields')),
+                  );
+                }
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         );
       },
-    );
-  }
-
-  Widget _buildRecentTransactions(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Recent Transactions', style: textTheme.titleLarge),
-        SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: const CircleAvatar(child: Icon(Icons.shopping_cart)),
-              title: Text('Transaction ${index + 1}', style: textTheme.titleMedium),
-              subtitle: Text('Category', style: textTheme.bodyMedium),
-              trailing: Text('\$${(index + 1) * 10}.00', style: textTheme.titleMedium),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickActions(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Quick Actions', style: textTheme.titleLarge),
-        SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildActionButton(context, Icons.add, 'Add Expense'),
-            _buildActionButton(context, Icons.bar_chart, 'View Reports'),
-            _buildActionButton(context, Icons.settings, 'Settings'),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(BuildContext context, IconData icon, String label) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          child: Icon(icon, size: 30),
-        ),
-        SizedBox(height: 8),
-        Text(label, style: textTheme.bodySmall),
-      ],
     );
   }
 }
