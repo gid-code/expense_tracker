@@ -26,23 +26,36 @@ class LoginResponse {
 }
 
 @JsonSerializable()
-   class SignupRequest {
-     final String name;
-     final String email;
-     final String password;
+  class SignupRequest {
+    final String name;
+    final String email;
+    final String password;
 
-     SignupRequest({required this.name, required this.email, required this.password});
+    SignupRequest({required this.name, required this.email, required this.password});
 
-     factory SignupRequest.fromJson(Map<String, dynamic> json) => _$SignupRequestFromJson(json);
-     Map<String, dynamic> toJson() => _$SignupRequestToJson(this);
-   }
+    factory SignupRequest.fromJson(Map<String, dynamic> json) => _$SignupRequestFromJson(json);
+    Map<String, dynamic> toJson() => _$SignupRequestToJson(this);
+  }
 
-   @JsonSerializable()
-   class SignupResponse {
-     final String message;
+  @JsonSerializable()
+  class SignupResponse {
+    final String message;
 
-     SignupResponse({required this.message});
+    SignupResponse({required this.message});
 
-     factory SignupResponse.fromJson(Map<String, dynamic> json) => _$SignupResponseFromJson(json);
-     Map<String, dynamic> toJson() => _$SignupResponseToJson(this);
-   }
+    factory SignupResponse.fromJson(Map<String, dynamic> json) => _$SignupResponseFromJson(json);
+    Map<String, dynamic> toJson() => _$SignupResponseToJson(this);
+  }
+
+  @JsonSerializable()
+  class UserProfile {
+    final String name;
+    final String email;
+
+    UserProfile({required this.name, required this.email});
+
+    factory UserProfile.fromJson(Map<String, dynamic> json) => _$UserProfileFromJson(json);
+    Map<String, dynamic> toJson() => _$UserProfileToJson(this);
+
+    String get firstName => name.split(' ')[0];
+  }

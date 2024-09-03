@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/app_provider.dart';
 
 class AccountInformationScreen extends StatelessWidget {
-  final String name;
-  final String email;
-
-  const AccountInformationScreen({
-    super.key,
-    required this.name,
-    required this.email,
-  });
+  const AccountInformationScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,36 +11,49 @@ class AccountInformationScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Account Information'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInfoItem(context, 'Name', name),
-            const SizedBox(height: 16),
-            _buildInfoItem(context, 'Email', email),
-          ],
-        ),
+      body: Consumer<AppProvider>(
+        builder: (context, appProvider, child) {
+          final userProfile = appProvider.userProfile;
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildInfoTile('Name', userProfile.name),
+                _buildInfoTile('Email', userProfile.email),
+                // Add more user information fields as needed
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildInfoItem(BuildContext context, String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-      ],
+  Widget _buildInfoTile(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+            ),
+          ),
+          const Divider(),
+        ],
+      ),
     );
   }
 }

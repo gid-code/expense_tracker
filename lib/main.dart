@@ -21,22 +21,18 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
-    TextTheme textTheme = createTextTheme(context, "Inter", "Inter");
-
-    MaterialTheme theme = MaterialTheme(textTheme);
-    return MaterialApp.router(
-      title: 'Expense Tracker',
-      theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      // theme: ThemeData(
-      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      //   useMaterial3: true,
-      // ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      routerConfig: router,
+    return Consumer<AppProvider>(
+      builder: (context, appProvider, child) {
+        return MaterialApp.router(
+          title: 'Expense Tracker',
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: appProvider.themeMode,
+          routerConfig: router,
+        );
+      },
     );
   }
 }

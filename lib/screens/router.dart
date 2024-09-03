@@ -3,6 +3,7 @@ import 'package:expense_tracker/screens/auth/splash_screen.dart';
 import 'package:expense_tracker/screens/home/dashboard_screen.dart';
 import 'package:expense_tracker/screens/home/expenses_screen.dart';
 import 'package:expense_tracker/screens/home/home_shell.dart';
+import 'package:expense_tracker/screens/home/settings/appearance_screen.dart';
 import 'package:expense_tracker/screens/home/settings/settings_screen.dart';
 import 'package:expense_tracker/screens/home/settings/account_information_screen.dart'; // Add this import
 import 'package:flutter/material.dart';
@@ -64,10 +65,13 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: 'account-information',
               builder: (BuildContext context, GoRouterState state) {
-                return const AccountInformationScreen(
-                  name: 'John Doe',
-                  email: 'johndoe@example.com',
-                );
+                return const AccountInformationScreen();
+              },
+            ),
+            GoRoute(
+              path: 'appearance',
+              builder: (BuildContext context, GoRouterState state) {
+                return const AppearanceScreen();
               },
             ),
           ],

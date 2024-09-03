@@ -86,12 +86,46 @@ class ApiService {
       }),
     );
 
-    print(response.body);
-
     if (response.statusCode == 201) {
       return "New Income added successfully";
     } else {
       throw Exception('Failed to add income: ${response.body}');
     }
   }
+
+  Future<void> addExpense(String accessToken, String name, String category, double amount) async {
+    final url = Uri.parse('$baseUrl/user/expenditure');
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken', 
+      },
+      body: json.encode({
+        'nameOfItem': name,
+        'category': category,
+        'estimatedAmount': amount,
+      }),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Failed to add expense');
+    }
+  }
+
+  Future<UserProfile> getUserProfile(String accessToken) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/user/profile'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return UserProfile.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load user profile');
+    }
+  }     
 }

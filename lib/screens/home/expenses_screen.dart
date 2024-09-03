@@ -14,19 +14,71 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppProvider>().fetchExpenditure();
-    });
+    
   }
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().fetchExpenditure();
+    });
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Expenses'),
-        elevation: 0,
+      // appBar: AppBar(
+      //   title: const Text('My Expenses'),
+      //   elevation: 0,
+      // ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    const Color(0xff429690)
+                  ]
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(60),
+                  bottomRight: Radius.circular(60),
+                ),
+              ),
+            ),
+          ),
+          Column(
+            children: [
+              const SizedBox(height: 80,),
+              Text(
+                'My Expenses',
+                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
+              const SizedBox(height: 45),
+              const Expanded(child: ExpensesList()),
+            ],
+          )
+        ],
       ),
-      body: const ExpensesList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddExpenseDialog(context),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAddExpenseDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AddExpenseDialog();
+      },
     );
   }
 }
@@ -38,18 +90,65 @@ class ExpensesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (context, appProvider, child) {
-        if (appProvider.isLoading) {
+        if (appProvider.isLoading && appProvider.expenditureItems.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         } else if (appProvider.errorMessage != null) {
           return Center(child: Text(appProvider.errorMessage!));
         } else if (appProvider.expenditureItems.isEmpty) {
-          return const Center(child: Text('No expenses found'));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.receipt_long,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No expenses found',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Tap the + button to add an expense',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                ),
+              ],
+            ),
+          );
         } else {
           // Group expenditure items by category
           final groupedExpenses = groupExpensesByCategory(appProvider.expenditureItems);
           return ListView.builder(
+            shrinkWrap: true,
             itemCount: groupedExpenses.length,
-            itemBuilder: (context, index) => ExpenseCategoryCard(category: groupedExpenses[index]),
+            itemBuilder: (context, index) {
+              final category = groupedExpenses[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      category['category'],
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  ...category['items'].map<Widget>((item) => 
+                    ExpenseItemTile(
+                      item: item, 
+                      color: getUniqueColor(item.nameOfItem ?? '')
+                    )
+                  ).toList(),
+                  const Divider(),
+                ],
+              );
+            },
           );
         }
       },
@@ -115,7 +214,7 @@ class ExpenseItemTile extends StatelessWidget {
       ),
       title: Text(item.nameOfItem ?? ''),
       trailing: Text(
-        '\$${item.estimatedAmount?.toStringAsFixed(2) ?? '0.00'}',
+        'GHS ${item.estimatedAmount?.toStringAsFixed(2) ?? '0.00'}',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: color,
@@ -125,61 +224,93 @@ class ExpenseItemTile extends StatelessWidget {
   }
 }
 
-// ... existing code ...
-
-final List<Map<String, dynamic>> expenses = [
-  {
-    'category': 'Food',
-    'items': [
-      {'name': 'Groceries', 'amount': 120.50},
-      {'name': 'Restaurant', 'amount': 45.00},
-      {'name': 'Snacks', 'amount': 15.75},
-    ],
-  },
-  {
-    'category': 'Transport',
-    'items': [
-      {'name': 'Gas', 'amount': 50.00},
-      {'name': 'Public Transit', 'amount': 30.00},
-      {'name': 'Taxi', 'amount': 25.50},
-    ],
-  },
-  {
-    'category': 'Entertainment',
-    'items': [
-      {'name': 'Movies', 'amount': 20.00},
-      {'name': 'Concerts', 'amount': 80.00},
-      {'name': 'Books', 'amount': 35.99},
-    ],
-  },
-];
-
 Color getUniqueColor(String itemName) {
   final int hash = itemName.hashCode;
   return Color((hash & 0xFFFFFF) | 0xFF000000);
 }
 
 IconData getIconForItem(String itemName) {
-  switch (itemName.toLowerCase()) {
-    case 'groceries':
-      return Icons.shopping_cart;
-    case 'restaurant':
-      return Icons.restaurant;
-    case 'snacks':
-      return Icons.fastfood;
-    case 'gas':
-      return Icons.local_gas_station;
-    case 'public transit':
-      return Icons.directions_bus;
-    case 'taxi':
-      return Icons.local_taxi;
-    case 'movies':
-      return Icons.movie;
-    case 'concerts':
-      return Icons.music_note;
-    case 'books':
-      return Icons.book;
-    default:
-      return Icons.attach_money;
+  final lowercaseItemName = itemName.toLowerCase();
+  if (lowercaseItemName.contains('groceries')) {
+    return Icons.shopping_cart;
+  } else if (lowercaseItemName.contains('restaurant')) {
+    return Icons.restaurant;
+  } else if (lowercaseItemName.contains('snacks')) {
+    return Icons.fastfood;
+  } else if (lowercaseItemName.contains('gas')) {
+    return Icons.local_gas_station;
+  } else if (lowercaseItemName.contains('public transit')) {
+    return Icons.directions_bus;
+  } else if (lowercaseItemName.contains('taxi')) {
+    return Icons.local_taxi;
+  } else if (lowercaseItemName.contains('movies')) {
+    return Icons.movie;
+  } else if (lowercaseItemName.contains('concerts')) {
+    return Icons.music_note;
+  } else if (lowercaseItemName.contains('books')) {
+    return Icons.book;
+  } else {
+    return Icons.attach_money;
+  }
+}
+
+class AddExpenseDialog extends StatefulWidget {
+  @override
+  _AddExpenseDialogState createState() => _AddExpenseDialogState();
+}
+
+class _AddExpenseDialogState extends State<AddExpenseDialog> {
+  final _formKey = GlobalKey<FormState>();
+  String? name;
+  String? category;
+  double? amount;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Add New Expense'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Name'),
+              validator: (value) => value!.isEmpty ? 'Please enter a name' : null,
+              onSaved: (value) => name = value,
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Category'),
+              validator: (value) => value!.isEmpty ? 'Please enter a category' : null,
+              onSaved: (value) => category = value,
+            ),
+            TextFormField(
+              decoration: InputDecoration(labelText: 'Estimated Amount'),
+              keyboardType: TextInputType.number,
+              validator: (value) => value!.isEmpty ? 'Please enter an amount' : null,
+              onSaved: (value) => amount = double.tryParse(value!),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('Cancel'),
+        ),
+        ElevatedButton(
+          onPressed: _submitForm,
+          child: Text('Add'),
+        ),
+      ],
+    );
+  }
+
+  void _submitForm() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      context.read<AppProvider>().addExpense(name!, category!, amount!);
+      Navigator.of(context).pop();
+    }
   }
 }

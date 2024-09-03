@@ -1,22 +1,62 @@
+import 'package:expense_tracker/models/auth_models.dart';
 import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:expense_tracker/models/income_item.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/services/apiservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:meta/meta.dart';
 
 class AppProvider with ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
   bool _isLoading = false;
   String? _errorMessage;
   String? _token;
   List<IncomeItem> _incomeItems = [];
   List<ExpenditureItem> _expenditureItems = [];
-
+  UserProfile _userProfile = UserProfile(name: 'John Doe', email: 'johndoe@example.com');
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String? get token => _token;
   List<IncomeItem> get incomeItems => _incomeItems;
   List<ExpenditureItem> get expenditureItems => _expenditureItems;
+  UserProfile get userProfile => _userProfile;
+
+
+  AppProvider._() : _apiService = ApiService();
+
+  @visibleForTesting
+  AppProvider.withApiService(this._apiService);
+
+  factory AppProvider() {
+    return AppProvider._();
+  }
+
+  @visibleForTesting
+  void setTokenForTesting(String? token) {
+    _token = token;
+    notifyListeners();
+  }
+
+  Future<void> getUserProfile() async {
+    if (_token == null) {
+      _errorMessage = 'Not authenticated';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _userProfile = await _apiService.getUserProfile(_token!);
+    } catch (e) {
+      _errorMessage = 'Failed to fetch user profile: ${e.toString()}';
+    } finally {
+      _isLoading = false; 
+      notifyListeners();
+    }
+  }
 
   Future<void> login(String email, String password) async {
     _isLoading = true;
@@ -27,6 +67,7 @@ class AppProvider with ChangeNotifier {
       final result = await _apiService.login(email, password);
       _token = result.accessToken;
       await _saveToken(_token!);
+      // await getUserProfile();
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -82,11 +123,8 @@ class AppProvider with ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-    print("in fetch income");
     try {
-      print("in try");
       _incomeItems = await _apiService.getIncome(_token!);
-      print(_incomeItems.map((e) => e.nameOfRevenue));
     } catch (e) {
       _errorMessage = 'Failed to fetch income data: ${e.toString()}';
     } finally {
@@ -122,21 +160,17 @@ class AppProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    print("in fetch all finance data");
 
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
-    print("after notify");
     try {
-      print("in try");
       final incomesFuture = _apiService.getIncome(_token!);
       final expendituresFuture = _apiService.getExpenditure(_token!);
 
       final results = await Future.wait([incomesFuture, expendituresFuture]);
       
       _incomeItems = results[0] as List<IncomeItem>;
-      print(_incomeItems.map((e) => e.nameOfRevenue));
       _expenditureItems = results[1] as List<ExpenditureItem>;
     } catch (e) {
       _errorMessage = 'Failed to fetch finance data: ${e.toString()}';
@@ -161,6 +195,7 @@ class AppProvider with ChangeNotifier {
     if (_token != null) {
       await fetchAllFinanceData();
     }
+    await loadThemeMode();
   }
 
   Future<void> addIncome(String name, double amount) async {
@@ -183,5 +218,56 @@ class AppProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> addExpense(String name, String category, double amount) async {
+    if (_token == null) {
+      _errorMessage = 'Not authenticated';
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _apiService.addExpense(_token!, name, category, amount);
+      await fetchExpenditure();
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Failed to add expense: ${e.toString()}';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode get themeMode => _themeMode;
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    if (_themeMode != mode) {
+      _themeMode = mode;
+      notifyListeners();
+      await _saveThemeMode(mode);
+    }
+  }
+
+  Future<void> loadThemeMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedMode = prefs.getString('theme_mode');
+    if (savedMode != null) {
+      _themeMode = ThemeMode.values.firstWhere(
+        (e) => e.toString() == savedMode,
+        orElse: () => ThemeMode.system,
+      );
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme_mode', mode.toString());
   }
 }

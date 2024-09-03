@@ -54,3 +54,14 @@ Map<String, dynamic> _$SignupResponseToJson(SignupResponse instance) =>
     <String, dynamic>{
       'message': instance.message,
     };
+
+UserProfile _$UserProfileFromJson(Map<String, dynamic> json) => UserProfile(
+      name: json['name'] as String,
+      email: json['email'] as String,
+    );
+
+Map<String, dynamic> _$UserProfileToJson(UserProfile instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'email': instance.email,
+    };

@@ -32,7 +32,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Container(
                 height: 260,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Theme.of(context).colorScheme.primary,
+                      const Color(0xff429690)
+                    ]
+                  ),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(60),
                     bottomRight: Radius.circular(60),
@@ -60,7 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                           const SizedBox(height: 2,),
                           Text(
-                            'User!',
+                            '${appProvider.userProfile.firstName}!',
                             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                             ),
@@ -93,16 +100,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ],
               ),
             ),
-            if (appProvider.isLoading)
+            if (appProvider.isLoading && appProvider.incomeItems.isEmpty && appProvider.expenditureItems.isEmpty)
               Container(
                 color: Colors.black.withOpacity(0.5),
-                child: Center(child: CircularProgressIndicator()),
+                child: const Center(child: CircularProgressIndicator()),
               ),
           ],
         );
       },
     );
   }
+
 
   Widget _buildSummaryCard(BuildContext context, AppProvider appProvider) {
     final textTheme = Theme.of(context).textTheme;
@@ -122,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '\$${appProvider.balance.toStringAsFixed(2)}',
+              'GHS ${appProvider.balance.toStringAsFixed(2)}',
               style: textTheme.headlineMedium?.copyWith(
                 color: colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -132,8 +140,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildMiniSummary(context, 'Income', '\$${appProvider.totalIncome.toStringAsFixed(2)}', Colors.white),
-                _buildMiniSummary(context, 'Expenses', '\$${appProvider.totalExpenditure.toStringAsFixed(2)}', Colors.white70),
+                _buildMiniSummary(context, 'Income', 'GHS ${appProvider.totalIncome.toStringAsFixed(2)}', Colors.white),
+                _buildMiniSummary(context, 'Expenses', 'GHS ${appProvider.totalExpenditure.toStringAsFixed(2)}', Colors.white70),
               ],
             ),
           ],
@@ -217,14 +225,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         showTitles: true,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
-                          return Text('\$${value.toInt()}', style: textTheme.bodySmall);
+                          return Text('${value.toInt()}', style: textTheme.bodySmall);
                         },
                       ),
                     ),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
-                  gridData: FlGridData(show: false),
+                  gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   barGroups: [
                     BarChartGroupData(
@@ -271,7 +279,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        // const SizedBox(height: 8),
         if (appProvider.incomeItems.isEmpty)
           Center(
             child: Column(
@@ -309,7 +317,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               return ListTile(
                 title: Text(income.nameOfRevenue ?? 'Unknown', style: textTheme.titleMedium),
                 trailing: Text(
-                  'GHc ${income.amount?.toStringAsFixed(2) ?? '0.00'}',
+                  'GHS ${income.amount?.toStringAsFixed(2) ?? '0.00'}',
                   style: textTheme.titleMedium?.copyWith(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold,
