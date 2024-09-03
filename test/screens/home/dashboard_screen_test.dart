@@ -85,39 +85,6 @@ void main() {
     expect(find.byType(BarChart), findsOneWidget);
   });
 
-  // testWidgets('DashboardScreen shows revenue history', (WidgetTester tester) async {
-  //   when(mockAppProvider.incomeItems).thenReturn([
-  //     IncomeItem(id: '1', nameOfRevenue: 'Salary', amount: 1000),
-  //     IncomeItem(id: '2', nameOfRevenue: 'Bonus', amount: 500),
-  //   ]);
-
-  //   await tester.pumpWidget(createDashboardScreen());
-
-  //   // Find the revenue history section
-  //   final revenueHistorySection = find.ancestor(
-  //     of: find.text('Revenue History'),
-  //     matching: find.byType(Column),
-  //   );
-
-  //   // Check for income items within the revenue history section
-  //   expect(find.descendant(
-  //     of: revenueHistorySection,
-  //     matching: find.text('Salary'),
-  //   ), findsOneWidget);
-  //   expect(find.descendant(
-  //     of: revenueHistorySection,
-  //     matching: find.text('GHS 1000.00'),
-  //   ), findsOneWidget);
-  //   expect(find.descendant(
-  //     of: revenueHistorySection,
-  //     matching: find.text('Bonus'),
-  //   ), findsOneWidget);
-  //   expect(find.descendant(
-  //     of: revenueHistorySection,
-  //     matching: find.text('GHS 500.00'),
-  //   ), findsOneWidget);
-  // });
-
   testWidgets('DashboardScreen shows "No revenue history" message', (WidgetTester tester) async {
     when(mockAppProvider.incomeItems).thenReturn([]);
 
