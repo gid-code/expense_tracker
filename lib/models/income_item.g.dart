@@ -22,6 +22,7 @@ IncomeItem _$IncomeItemFromJson(Map<String, dynamic> json) => IncomeItem(
       id: json['id'] as String?,
       nameOfRevenue: json['nameOfRevenue'] as String?,
       amount: (json['amount'] as num?)?.toInt(),
+      user: json['user'] as String?,
     );
 
 Map<String, dynamic> _$IncomeItemToJson(IncomeItem instance) =>
@@ -29,4 +30,5 @@ Map<String, dynamic> _$IncomeItemToJson(IncomeItem instance) =>
       'id': instance.id,
       'nameOfRevenue': instance.nameOfRevenue,
       'amount': instance.amount,
+      'user': instance.user,
     };

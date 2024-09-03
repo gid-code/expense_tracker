@@ -59,7 +59,7 @@ void main() {
 
     test('fetchAllFinanceData success', () async {
       appProvider.setTokenForTesting('test_token');
-      final incomeItems = [IncomeItem(id: '1', nameOfRevenue: 'Salary', amount: 5000)];
+      final incomeItems = [IncomeItem(id: '1', nameOfRevenue: 'Salary', amount: 5000, user: 'test_user')];
       final expenditureItems = [ExpenditureItem(id: '1', nameOfItem: 'Rent', estimatedAmount: 1000, category: 'Housing')];
 
       when(mockApiService.getIncome('test_token')).thenAnswer((_) async => incomeItems);

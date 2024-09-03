@@ -22,11 +22,13 @@ class IncomeItem {
         required this.id,
         required this.nameOfRevenue,
         required this.amount,
+        required this.user
     });
 
     final String? id;
     final String? nameOfRevenue;
     final int? amount;
+    final String? user;
 
     factory IncomeItem.fromJson(Map<String, dynamic> json) => _$IncomeItemFromJson(json);
 

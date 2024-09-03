@@ -48,8 +48,12 @@ class ApiService {
 
     // print(response.body);
     if (response.statusCode == 200) {
-      final incomeResponse = IncomeResponse.fromJson(jsonDecode(response.body));
-      return incomeResponse.data ?? [];
+      // final incomeResponse = IncomeResponse.fromJson(jsonDecode(response.body));
+      // return incomeResponse.data ?? [];
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      // print(jsonList);
+      return jsonList.map((json) => IncomeItem.fromJson(json)).toList();
+      
     } else {
       throw Exception('Failed to load income data');
     }
@@ -66,8 +70,11 @@ class ApiService {
 
     
     if (response.statusCode == 200) {
-      final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
-      return expenditureResponse.data ?? [];
+      // final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
+      // return expenditureResponse.data ?? [];
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      // print(jsonList);
+      return jsonList.map((json) => ExpenditureItem.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load expenditure data');
     }

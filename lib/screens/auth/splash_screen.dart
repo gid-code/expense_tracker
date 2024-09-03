@@ -41,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Text(
-          'mono',
+          'SpendWise',
           style: Theme.of(context).textTheme.displayLarge!.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
