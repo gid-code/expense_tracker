@@ -1,9 +1,9 @@
 import 'package:expense_tracker/providers/app_provider.dart';
 import 'package:expense_tracker/screens/router.dart';
-import 'package:expense_tracker/theme.dart';
-import 'package:expense_tracker/util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:expense_tracker/theme.dart';
+import 'package:expense_tracker/util.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +23,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = createTextTheme(context, "Inter", "Inter");
+    MaterialTheme theme = MaterialTheme(textTheme);
     return Consumer<AppProvider>(
       builder: (context, appProvider, child) {
         return MaterialApp.router(
           title: 'Expense Tracker',
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: theme.light(),
+          darkTheme: theme.dark(),
           themeMode: appProvider.themeMode,
           routerConfig: router,
         );

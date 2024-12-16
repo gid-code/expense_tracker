@@ -80,8 +80,11 @@ class SettingsScreen extends StatelessWidget {
         if (title == 'Appearance') {
           context.go('/settings/appearance');
         }
+        if ( title == 'Security') {
+          context.go('/settings/security');
+        }
         
-        // TODO: Implement navigation for other settings pages
+        
       },
     );
   }
@@ -203,7 +206,8 @@ class SettingsScreen extends StatelessWidget {
                       'Security',
                       Icons.security,
                       [
-                        _buildSettingsTile(context, 'Privacy & Security', Icons.lock),
+                        _buildSettingsTile(context, 'Security', Icons.lock),
+                        _buildSettingsTile(context, 'Privacy Policy', Icons.privacy_tip_rounded),
                       ],
                     ),
                     _buildSettingsSection(

@@ -171,28 +171,28 @@ class ExpensesList extends StatelessWidget {
   }
 }
 
-class ExpenseCategoryCard extends StatelessWidget {
-  final Map<String, dynamic> category;
+// class ExpenseCategoryCard extends StatelessWidget {
+//   final Map<String, dynamic> category;
 
-  const ExpenseCategoryCard({super.key, required this.category});
+//   const ExpenseCategoryCard({super.key, required this.category});
 
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: ExpansionTile(
-        title: Text(
-          category['category'],
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        children: [
-          for (ExpenditureItem item in category['items'])
-            ExpenseItemTile(item: item, color: getUniqueColor(item.nameOfItem ?? '')),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Card(
+//       margin: const EdgeInsets.all(10),
+//       child: ExpansionTile(
+//         title: Text(
+//           category['category'],
+//           style: Theme.of(context).textTheme.titleLarge,
+//         ),
+//         children: [
+//           for (ExpenditureItem item in category['items'])
+//             ExpenseItemTile(item: item, color: getUniqueColor(item.nameOfItem ?? '')),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class ExpenseItemTile extends StatelessWidget {
   final ExpenditureItem item;

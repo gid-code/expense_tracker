@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/app_provider.dart';
 
 class AppearanceScreen extends StatelessWidget {
-  const AppearanceScreen({Key? key}) : super(key: key);
+  const AppearanceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,6 @@ class AppearanceScreen extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              // You can add more appearance-related settings here
             ],
           );
         },
