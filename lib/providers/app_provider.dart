@@ -270,4 +270,25 @@ class AppProvider with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('theme_mode', mode.toString());
   }
+
+  bool _isBiometricEnabled = false;
+  bool get isBiometricEnabled => _isBiometricEnabled;
+
+  Future<void> toggleBiometric() async{
+    _isBiometricEnabled = !_isBiometricEnabled;
+    notifyListeners();
+    await _saveEnableBiometric(!_isBiometricEnabled);
+  }
+
+  Future<void> getIsBiometricEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isEnabled = prefs.getBool('is_biometric_enabled');
+    _isBiometricEnabled = isEnabled ?? false;
+    notifyListeners();
+  }
+
+  Future<void> _saveEnableBiometric(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_biometric_enabled', value);
+  }
 }
