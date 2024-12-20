@@ -7,19 +7,33 @@ import 'package:expense_tracker/util.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appProvider = AppProvider();
-  await appProvider.initializeApp();
+  // final appProvider = AppProvider();
+  // await appProvider.initializeApp();
 
-  runApp(
-    ChangeNotifierProvider.value(
-      value: appProvider,
-      child: const MyApp(),
-    ),
-  );
+  // runApp(
+  //   ChangeNotifierProvider.value(
+  //     value: appProvider,
+  //     child: const MyApp(),
+  //   ),
+  // );
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+  
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => AppProvider(context),
+      child: const MyAppContent(),
+    );
+  }
+}
+
+class MyAppContent extends StatelessWidget {
+  const MyAppContent({super.key});
 
   @override
   Widget build(BuildContext context) {

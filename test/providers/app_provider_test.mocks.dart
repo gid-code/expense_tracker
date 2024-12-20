@@ -8,7 +8,7 @@ import 'dart:async' as _i4;
 import 'package:expense_tracker/models/auth_models.dart' as _i2;
 import 'package:expense_tracker/models/expenditure_item.dart' as _i6;
 import 'package:expense_tracker/models/income_item.dart' as _i5;
-import 'package:expense_tracker/services/apiservice.dart' as _i3;
+import 'package:expense_tracker/network/services/apiservice.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
 

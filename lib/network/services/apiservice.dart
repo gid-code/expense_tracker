@@ -1,16 +1,36 @@
 import 'package:expense_tracker/models/auth_models.dart';
 import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:expense_tracker/models/income_item.dart';
+import 'package:expense_tracker/network/interceptors/authentication_interceptor.dart';
+import 'package:expense_tracker/network/interceptors/defalut_headers_interceptor.dart';
+import 'package:expense_tracker/network/interceptors/network_status_interceptor.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:http_interceptor/http/intercepted_client.dart';
 
 class ApiService {
   static const String baseUrl = 'https://personal-expense-tracker.myladder.africa';
 
+  final BuildContext context;
+
+  ApiService(this.context);
+
+  InterceptedClient get httpClient => InterceptedClient.build(
+    interceptors: [
+      NetworkStatusInterceptor(),
+      AuthenticationInterceptor(context),
+      DefalutHeadersInterceptor()
+    ],
+  );
+
   Future<LoginResponse> login(String email, String password) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/auth/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'No-Authentication': '',
+      },
       body: jsonEncode(LoginRequest(email: email, password: password).toJson()),
     );
 
@@ -24,9 +44,11 @@ class ApiService {
   }
 
   Future<SignupResponse> signup(String name, String email, String password) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/auth/signup'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'No-Authentication': '',
+      },
       body: jsonEncode(SignupRequest(name: name, email: email, password: password).toJson()),
     );
 
@@ -38,12 +60,8 @@ class ApiService {
   }
 
   Future<List<IncomeItem>> getIncome(String accessToken) async {
-    final response = await http.get(
+    final response = await httpClient.get(
       Uri.parse('$baseUrl/user/income'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
 
     // print(response.body);
@@ -60,14 +78,9 @@ class ApiService {
   }
 
   Future<List<ExpenditureItem>> getExpenditure(String accessToken) async {
-    final response = await http.get(
+    final response = await httpClient.get(
       Uri.parse('$baseUrl/user/expenditure'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
-
     
     if (response.statusCode == 200) {
       // final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
@@ -81,12 +94,8 @@ class ApiService {
   }
 
   Future<String> addIncome(String accessToken, String name, double amount) async {
-    final response = await http.post(
+    final response = await httpClient.post(
       Uri.parse('$baseUrl/user/income'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
       body: jsonEncode({
         'nameOfRevenue': name,
         'amount': amount,
@@ -102,12 +111,8 @@ class ApiService {
 
   Future<void> addExpense(String accessToken, String name, String category, double amount) async {
     final url = Uri.parse('$baseUrl/user/expenditure');
-    final response = await http.post(
+    final response = await httpClient.post(
       url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken', 
-      },
       body: json.encode({
         'nameOfItem': name,
         'category': category,
@@ -121,12 +126,8 @@ class ApiService {
   }
 
   Future<UserProfile> getUserProfile(String accessToken) async {
-    final response = await http.get(
+    final response = await httpClient.get(
       Uri.parse('$baseUrl/user/profile'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
 
     if (response.statusCode == 200) {

@@ -2,7 +2,7 @@ import 'package:expense_tracker/models/auth_models.dart';
 import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:expense_tracker/models/income_item.dart';
 import 'package:expense_tracker/providers/app_provider.dart';
-import 'package:expense_tracker/services/apiservice.dart';
+import 'package:expense_tracker/network/services/apiservice.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

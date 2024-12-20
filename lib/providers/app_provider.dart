@@ -2,12 +2,13 @@ import 'package:expense_tracker/models/auth_models.dart';
 import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:expense_tracker/models/income_item.dart';
 import 'package:flutter/material.dart';
-import 'package:expense_tracker/services/apiservice.dart';
+import 'package:expense_tracker/network/services/apiservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meta/meta.dart';
 
 class AppProvider with ChangeNotifier {
   final ApiService _apiService;
+  final BuildContext context;
   bool _isLoading = false;
   String? _errorMessage;
   String? _token;
@@ -22,13 +23,13 @@ class AppProvider with ChangeNotifier {
   UserProfile get userProfile => _userProfile;
 
 
-  AppProvider._() : _apiService = ApiService();
+  AppProvider._(this.context) : _apiService = ApiService(context);
 
   @visibleForTesting
-  AppProvider.withApiService(this._apiService);
+  AppProvider.withApiService(this._apiService, this.context);
 
-  factory AppProvider() {
-    return AppProvider._();
+  factory AppProvider(BuildContext context) {
+    return AppProvider._(context);
   }
 
   @visibleForTesting
@@ -109,6 +110,7 @@ class AppProvider with ChangeNotifier {
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('access_token');
+    await prefs.remove('is_biometric_enabled');
     _token = null;
     notifyListeners();
   }
