@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => AppProvider(context),
+      create: (context) => AppProvider(context)..initializeApp(),
       child: const MyAppContent(),
     );
   }

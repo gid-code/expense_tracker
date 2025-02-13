@@ -5,7 +5,7 @@ import 'package:expense_tracker/network/interceptors/authentication_interceptor.
 import 'package:expense_tracker/network/interceptors/defalut_headers_interceptor.dart';
 import 'package:expense_tracker/network/interceptors/network_status_interceptor.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:http_interceptor/http/intercepted_client.dart';
