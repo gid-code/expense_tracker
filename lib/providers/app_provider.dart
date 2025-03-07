@@ -7,8 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meta/meta.dart';
 
 class AppProvider with ChangeNotifier {
+  static AppProvider? _instance;
+  static AppProvider get instance => _instance!;
   final ApiService _apiService;
-  final BuildContext context;
+  // final BuildContext context;
   bool _isLoading = false;
   String? _errorMessage;
   String? _token;
@@ -23,14 +25,20 @@ class AppProvider with ChangeNotifier {
   UserProfile get userProfile => _userProfile;
 
 
-  AppProvider._(this.context) : _apiService = ApiService(context);
-
-  @visibleForTesting
-  AppProvider.withApiService(this._apiService, this.context);
-
-  factory AppProvider(BuildContext context) {
-    return AppProvider._(context);
+  // AppProvider._(this.context) : _apiService = ApiService(context);
+  factory AppProvider() {
+    _instance ??= AppProvider._();
+    return _instance!;
   }
+
+  AppProvider._() : _apiService = ApiService();
+
+  // @visibleForTesting
+  // AppProvider.withApiService(this._apiService, this.context);
+
+  // factory AppProvider(BuildContext context) {
+  //   return AppProvider._(context);
+  // }
 
   @visibleForTesting
   void setTokenForTesting(String? token) {
@@ -67,6 +75,7 @@ class AppProvider with ChangeNotifier {
     try {
       final result = await _apiService.login(email, password);
       _token = result.accessToken;
+      print("token: $_token");
       await _saveToken(_token!);
       // await getUserProfile();
     } catch (e) {
@@ -104,6 +113,7 @@ class AppProvider with ChangeNotifier {
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('access_token');
+    print("token from loadtoken: $_token");
     notifyListeners();
   }
 
@@ -168,12 +178,13 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
     try {
       final incomesFuture = _apiService.getIncome(_token!);
-      final expendituresFuture = _apiService.getExpenditure(_token!);
+      // final expendituresFuture = _apiService.getExpenditure(_token!);
 
-      final results = await Future.wait([incomesFuture, expendituresFuture]);
+      // final results = await Future.wait([incomesFuture, expendituresFuture]);
       
-      _incomeItems = results[0] as List<IncomeItem>;
-      _expenditureItems = results[1] as List<ExpenditureItem>;
+      // _incomeItems = results[0] as List<IncomeItem>;
+      // _expenditureItems = results[1] as List<ExpenditureItem>;
+      _incomeItems = await incomesFuture;
     } catch (e) {
       _errorMessage = 'Failed to fetch finance data: ${e.toString()}';
     } finally {
@@ -193,9 +204,19 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> initializeApp() async {
-    await loadToken();
-    if (_token != null) {
-      await fetchAllFinanceData();
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await loadToken();
+      if (_token != null) {
+        await fetchAllFinanceData();
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to initialize app: ${e.toString()}';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
     await loadThemeMode();
   }
@@ -212,7 +233,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await _apiService.addIncome(_token!, name, amount);
+      await _apiService.addIncome(name, amount.toStringAsFixed(2));
       await fetchAllFinanceData();
     } catch (e) {
       _errorMessage = 'Failed to add income: ${e.toString()}';

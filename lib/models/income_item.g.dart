@@ -19,10 +19,10 @@ Map<String, dynamic> _$IncomeResponseToJson(IncomeResponse instance) =>
     };
 
 IncomeItem _$IncomeItemFromJson(Map<String, dynamic> json) => IncomeItem(
-      id: json['id'] as String?,
-      nameOfRevenue: json['nameOfRevenue'] as String?,
-      amount: (json['amount'] as num?)?.toInt(),
-      user: json['user'] as String?,
+      id: json['id'] as int?,
+      nameOfRevenue: json['name_of_revenue'] as String?,
+      amount: (json['amount'] as num?)?.toDouble(),
+      user: json['user'] as int?,
     );
 
 Map<String, dynamic> _$IncomeItemToJson(IncomeItem instance) =>

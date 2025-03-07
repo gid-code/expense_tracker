@@ -1,3 +1,4 @@
+import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/screens/auth/auth_shell.dart';
 import 'package:expense_tracker/screens/auth/splash_screen.dart';
 import 'package:expense_tracker/screens/home/dashboard_screen.dart';
@@ -12,6 +13,7 @@ import 'package:expense_tracker/screens/auth/login_screen.dart';
 import 'package:expense_tracker/screens/auth/signup_screen.dart';
 
 final GoRouter router = GoRouter(
+  navigatorKey: navigatorKey,
   initialLocation: '/',
   routes: <RouteBase>[
     GoRoute(

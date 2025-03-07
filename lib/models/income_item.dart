@@ -25,10 +25,10 @@ class IncomeItem {
         required this.user
     });
 
-    final String? id;
+    final int? id;
     final String? nameOfRevenue;
-    final int? amount;
-    final String? user;
+    final double? amount;
+    final int? user;
 
     factory IncomeItem.fromJson(Map<String, dynamic> json) => _$IncomeItemFromJson(json);
 

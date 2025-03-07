@@ -11,23 +11,25 @@ import 'dart:convert';
 import 'package:http_interceptor/http/intercepted_client.dart';
 
 class ApiService {
-  static const String baseUrl = 'https://personal-expense-tracker.myladder.africa';
+  // static const String baseUrl = 'https://personal-expense-tracker.myladder.africa';
+  static const String baseUrl = 'https://spendwise.up.railway.app/api';
 
-  final BuildContext context;
 
-  ApiService(this.context);
+  // final BuildContext context;
+
+  ApiService();
 
   InterceptedClient get httpClient => InterceptedClient.build(
     interceptors: [
       NetworkStatusInterceptor(),
-      AuthenticationInterceptor(context),
+      AuthenticationInterceptor(),
       DefalutHeadersInterceptor()
     ],
   );
 
   Future<LoginResponse> login(String email, String password) async {
     final response = await httpClient.post(
-      Uri.parse('$baseUrl/auth/login'),
+      Uri.parse('$baseUrl/login'),
       headers: {
         'No-Authentication': '',
       },
@@ -45,7 +47,7 @@ class ApiService {
 
   Future<SignupResponse> signup(String name, String email, String password) async {
     final response = await httpClient.post(
-      Uri.parse('$baseUrl/auth/signup'),
+      Uri.parse('$baseUrl/register'),
       headers: {
         'No-Authentication': '',
       },
@@ -66,11 +68,11 @@ class ApiService {
 
     // print(response.body);
     if (response.statusCode == 200) {
-      // final incomeResponse = IncomeResponse.fromJson(jsonDecode(response.body));
-      // return incomeResponse.data ?? [];
-      final List<dynamic> jsonList = jsonDecode(response.body);
+      final incomeResponse = IncomeResponse.fromJson(jsonDecode(response.body));
+      return incomeResponse.data ?? [];
+      // final List<dynamic> jsonList = jsonDecode(response.body);
       // print(jsonList);
-      return jsonList.map((json) => IncomeItem.fromJson(json)).toList();
+      // return incomeResponse.data.map((json) => IncomeItem.fromJson(json)).toList();
       
     } else {
       throw Exception('Failed to load income data');
@@ -79,7 +81,7 @@ class ApiService {
 
   Future<List<ExpenditureItem>> getExpenditure(String accessToken) async {
     final response = await httpClient.get(
-      Uri.parse('$baseUrl/user/expenditure'),
+      Uri.parse('$baseUrl/user/expense'),
     );
     
     if (response.statusCode == 200) {
@@ -93,11 +95,11 @@ class ApiService {
     }
   }
 
-  Future<String> addIncome(String accessToken, String name, double amount) async {
+  Future<String> addIncome(String name, String amount) async {
     final response = await httpClient.post(
       Uri.parse('$baseUrl/user/income'),
       body: jsonEncode({
-        'nameOfRevenue': name,
+        'name_of_revenue': name,
         'amount': amount,
       }),
     );
@@ -110,7 +112,7 @@ class ApiService {
   }
 
   Future<void> addExpense(String accessToken, String name, String category, double amount) async {
-    final url = Uri.parse('$baseUrl/user/expenditure');
+    final url = Uri.parse('$baseUrl/user/expense');
     final response = await httpClient.post(
       url,
       body: json.encode({
@@ -127,7 +129,7 @@ class ApiService {
 
   Future<UserProfile> getUserProfile(String accessToken) async {
     final response = await httpClient.get(
-      Uri.parse('$baseUrl/user/profile'),
+      Uri.parse('$baseUrl/user'),
     );
 
     if (response.statusCode == 200) {

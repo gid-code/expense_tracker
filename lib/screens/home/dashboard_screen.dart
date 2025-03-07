@@ -269,7 +269,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Text('Revenue History', style: textTheme.titleLarge),
             ElevatedButton.icon(
-              onPressed: () => _showAddRevenueDialog(context),
+              onPressed: () => _showAddRevenueDialog(context,appProvider),
               icon: Icon(Icons.add, color: colorScheme.onPrimary),
               label: const Text('Add New'),
               style: ElevatedButton.styleFrom(
@@ -330,7 +330,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  void _showAddRevenueDialog(BuildContext context) {
+  void _showAddRevenueDialog(BuildContext context, AppProvider appProvider) {
     final nameController = TextEditingController();
     final amountController = TextEditingController();
 
@@ -364,7 +364,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 if (nameController.text.isNotEmpty && amountController.text.isNotEmpty) {
                   final amount = double.tryParse(amountController.text);
                   if (amount != null) {
-                    final appProvider = context.read<AppProvider>();
+                    // final appProvider = context.read<AppProvider>();
                     await appProvider.addIncome(nameController.text, amount);
                     if (appProvider.errorMessage == null) {
                       if(context.mounted){
@@ -373,8 +373,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     } else {
                       if(context.mounted){
                         ScaffoldMessenger.of(context).showSnackBar(
+                          
                           SnackBar(content: Text(appProvider.errorMessage!)),
                         );
+                        // ignore: avoid_print
+                          print(appProvider.errorMessage);
                       }
                     }
                   } else {

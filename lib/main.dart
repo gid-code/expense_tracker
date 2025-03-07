@@ -5,32 +5,34 @@ import 'package:provider/provider.dart';
 import 'package:expense_tracker/theme.dart';
 import 'package:expense_tracker/util.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // final appProvider = AppProvider();
-  // await appProvider.initializeApp();
+  final appProvider = AppProvider();
+  await appProvider.initializeApp();
 
-  // runApp(
-  //   ChangeNotifierProvider.value(
-  //     value: appProvider,
-  //     child: const MyApp(),
-  //   ),
-  // );
-
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AppProvider(context)..initializeApp(),
+  runApp(
+    ChangeNotifierProvider.value(
+      value: appProvider,
       child: const MyAppContent(),
-    );
-  }
+    ),
+  );
+
+  // runApp(const MyApp());
 }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+  
+//   @override
+//   Widget build(BuildContext context) {
+//     return ChangeNotifierProvider(
+//       create: (context) => AppProvider(context)..initializeApp(),
+//       child: const MyAppContent(),
+//     );
+//   }
+// }
 
 class MyAppContent extends StatelessWidget {
   const MyAppContent({super.key});
@@ -42,6 +44,7 @@ class MyAppContent extends StatelessWidget {
     return Consumer<AppProvider>(
       builder: (context, appProvider, child) {
         return MaterialApp.router(
+          
           title: 'Expense Tracker',
           theme: theme.light(),
           darkTheme: theme.dark(),
