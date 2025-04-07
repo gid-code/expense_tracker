@@ -23,15 +23,33 @@ class ExpenditureItem {
         required this.category,
         required this.nameOfItem,
         required this.estimatedAmount,
+        required this.user
     });
 
-    final String? id;
-    final String? category;
+    final int? id;
+    final Category? category;
     final String? nameOfItem;
-    final int? estimatedAmount;
+    final double? estimatedAmount;
+    final int? user;
 
     factory ExpenditureItem.fromJson(Map<String, dynamic> json) => _$ExpenditureItemFromJson(json);
 
     Map<String, dynamic> toJson() => _$ExpenditureItemToJson(this);
+
+}
+
+@JsonSerializable()
+class Category {
+    Category({
+        required this.id,
+        required this.name,
+    });
+
+    final int id;
+    final String name;
+
+    factory Category.fromJson(Map<String, dynamic> json) => _$CategoryFromJson(json);
+
+    Map<String, dynamic> toJson() => _$CategoryToJson(this);
 
 }

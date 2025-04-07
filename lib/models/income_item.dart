@@ -8,12 +8,11 @@ class IncomeResponse {
         required this.data,
     });
 
-    final List<IncomeItem>? data;
-
     factory IncomeResponse.fromJson(Map<String, dynamic> json) => _$IncomeResponseFromJson(json);
 
-    Map<String, dynamic> toJson() => _$IncomeResponseToJson(this);
+    final List<IncomeItem>? data;
 
+    Map<String, dynamic> toJson() => _$IncomeResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -22,16 +21,15 @@ class IncomeItem {
         required this.id,
         required this.nameOfRevenue,
         required this.amount,
-        required this.user
+        required this.userId
     });
-
-    final int? id;
-    final String? nameOfRevenue;
-    final double? amount;
-    final int? user;
 
     factory IncomeItem.fromJson(Map<String, dynamic> json) => _$IncomeItemFromJson(json);
 
-    Map<String, dynamic> toJson() => _$IncomeItemToJson(this);
+    final double? amount;
+    final int? id;
+    final String? nameOfRevenue;
+    final int? userId;
 
+    Map<String, dynamic> toJson() => _$IncomeItemToJson(this);
 }

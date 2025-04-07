@@ -61,12 +61,12 @@ class ApiService {
     }
   }
 
-  Future<List<IncomeItem>> getIncome(String accessToken) async {
+  Future<List<IncomeItem>> getIncome() async {
     final response = await httpClient.get(
       Uri.parse('$baseUrl/user/income'),
     );
 
-    // print(response.body);
+    // print(response.body)\;
     if (response.statusCode == 200) {
       final incomeResponse = IncomeResponse.fromJson(jsonDecode(response.body));
       return incomeResponse.data ?? [];
@@ -79,17 +79,17 @@ class ApiService {
     }
   }
 
-  Future<List<ExpenditureItem>> getExpenditure(String accessToken) async {
+  Future<List<ExpenditureItem>> getExpenditure() async {
     final response = await httpClient.get(
       Uri.parse('$baseUrl/user/expense'),
     );
     
     if (response.statusCode == 200) {
-      // final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
-      // return expenditureResponse.data ?? [];
-      final List<dynamic> jsonList = jsonDecode(response.body);
+      final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
+      return expenditureResponse.data ?? [];
+      // final List<dynamic> jsonList = jsonDecode(response.body);
       // print(jsonList);
-      return jsonList.map((json) => ExpenditureItem.fromJson(json)).toList();
+      // return jsonList.map((json) => ExpenditureItem.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load expenditure data');
     }
@@ -111,14 +111,15 @@ class ApiService {
     }
   }
 
-  Future<void> addExpense(String accessToken, String name, String category, double amount) async {
+  Future<void> addExpense(String name, String? category, int? categoryId, String amount) async {
     final url = Uri.parse('$baseUrl/user/expense');
     final response = await httpClient.post(
       url,
       body: json.encode({
-        'nameOfItem': name,
+        'name_of_expense': name,
         'category': category,
-        'estimatedAmount': amount,
+        'category_id': categoryId,
+        'amount': amount,
       }),
     );
 
@@ -127,7 +128,7 @@ class ApiService {
     }
   }
 
-  Future<UserProfile> getUserProfile(String accessToken) async {
+  Future<UserProfile> getUserProfile() async {
     final response = await httpClient.get(
       Uri.parse('$baseUrl/user'),
     );

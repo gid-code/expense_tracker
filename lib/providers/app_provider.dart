@@ -58,7 +58,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _userProfile = await _apiService.getUserProfile(_token!);
+      _userProfile = await _apiService.getUserProfile();
     } catch (e) {
       _errorMessage = 'Failed to fetch user profile: ${e.toString()}';
     } finally {
@@ -75,7 +75,6 @@ class AppProvider with ChangeNotifier {
     try {
       final result = await _apiService.login(email, password);
       _token = result.accessToken;
-      print("token: $_token");
       await _saveToken(_token!);
       // await getUserProfile();
     } catch (e) {
@@ -136,7 +135,7 @@ class AppProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      _incomeItems = await _apiService.getIncome(_token!);
+      _incomeItems = await _apiService.getIncome();
     } catch (e) {
       _errorMessage = 'Failed to fetch income data: ${e.toString()}';
     } finally {
@@ -157,7 +156,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _expenditureItems = await _apiService.getExpenditure(_token!);
+      _expenditureItems = await _apiService.getExpenditure();
     } catch (e) {
       _errorMessage = 'Failed to fetch expenditure data: ${e.toString()}';
     } finally {
@@ -177,14 +176,13 @@ class AppProvider with ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
     try {
-      final incomesFuture = _apiService.getIncome(_token!);
-      // final expendituresFuture = _apiService.getExpenditure(_token!);
+      final incomesFuture = _apiService.getIncome();
+      final expendituresFuture = _apiService.getExpenditure();
 
-      // final results = await Future.wait([incomesFuture, expendituresFuture]);
+      final results = await Future.wait([incomesFuture, expendituresFuture]);
       
-      // _incomeItems = results[0] as List<IncomeItem>;
-      // _expenditureItems = results[1] as List<ExpenditureItem>;
-      _incomeItems = await incomesFuture;
+      _incomeItems = results[0] as List<IncomeItem>;
+      _expenditureItems = results[1] as List<ExpenditureItem>;
     } catch (e) {
       _errorMessage = 'Failed to fetch finance data: ${e.toString()}';
     } finally {
@@ -243,7 +241,7 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addExpense(String name, String category, double amount) async {
+  Future<void> addExpense(String name, String? category, int? categoryId, String amount) async {
     if (_token == null) {
       _errorMessage = 'Not authenticated';
       notifyListeners();
@@ -255,7 +253,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await _apiService.addExpense(_token!, name, category, amount);
+      await _apiService.addExpense(name, category,categoryId, amount);
       await fetchExpenditure();
       notifyListeners();
     } catch (e) {

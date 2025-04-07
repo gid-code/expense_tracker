@@ -21,10 +21,13 @@ Map<String, dynamic> _$ExpenditureResponseToJson(
 
 ExpenditureItem _$ExpenditureItemFromJson(Map<String, dynamic> json) =>
     ExpenditureItem(
-      id: json['id'] as String?,
-      category: json['category'] as String?,
-      nameOfItem: json['nameOfItem'] as String?,
-      estimatedAmount: (json['estimatedAmount'] as num?)?.toInt(),
+      id: (json['id'] as num?)?.toInt(),
+      category: json['category'] == null
+          ? null
+          : Category.fromJson(json['category'] as Map<String, dynamic>),
+      nameOfItem: json['name_of_item'] as String?,
+      estimatedAmount: (json['amount'] as num?)?.toDouble(),
+      user: (json['user_id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ExpenditureItemToJson(ExpenditureItem instance) =>
@@ -33,4 +36,15 @@ Map<String, dynamic> _$ExpenditureItemToJson(ExpenditureItem instance) =>
       'category': instance.category,
       'nameOfItem': instance.nameOfItem,
       'estimatedAmount': instance.estimatedAmount,
+      'user': instance.user,
+    };
+
+Category _$CategoryFromJson(Map<String, dynamic> json) => Category(
+      id: (json['id'] as num).toInt(),
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
     };
