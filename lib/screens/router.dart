@@ -2,7 +2,7 @@ import 'package:expense_tracker/main.dart';
 import 'package:expense_tracker/screens/auth/auth_shell.dart';
 import 'package:expense_tracker/screens/auth/splash_screen.dart';
 import 'package:expense_tracker/screens/home/dashboard_screen.dart';
-import 'package:expense_tracker/screens/home/expenses_screen.dart';
+import 'package:expense_tracker/screens/home/expense/expenses_screen.dart';
 import 'package:expense_tracker/screens/home/home_shell.dart';
 import 'package:expense_tracker/screens/home/settings/appearance_screen.dart';
 import 'package:expense_tracker/screens/home/settings/settings_screen.dart';

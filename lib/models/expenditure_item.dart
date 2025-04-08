@@ -36,6 +36,9 @@ class ExpenditureItem {
 
     Map<String, dynamic> toJson() => _$ExpenditureItemToJson(this);
 
+    @override
+    String toString() => "id: $id, category: $category, nameOfItem: $nameOfItem, estimatedAmount: $estimatedAmount";
+
 }
 
 @JsonSerializable()
@@ -51,5 +54,8 @@ class Category {
     factory Category.fromJson(Map<String, dynamic> json) => _$CategoryFromJson(json);
 
     Map<String, dynamic> toJson() => _$CategoryToJson(this);
+
+    @override
+    String toString() => "name: $name";
 
 }

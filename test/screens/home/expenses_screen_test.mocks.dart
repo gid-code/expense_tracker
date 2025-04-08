@@ -96,6 +96,12 @@ class MockAppProvider extends _i1.Mock implements _i3.AppProvider {
       ) as _i6.ThemeMode);
 
   @override
+  bool get isBiometricEnabled => (super.noSuchMethod(
+        Invocation.getter(#isBiometricEnabled),
+        returnValue: false,
+      ) as bool);
+
+  @override
   bool get hasListeners => (super.noSuchMethod(
         Invocation.getter(#hasListeners),
         returnValue: false,
@@ -245,7 +251,8 @@ class MockAppProvider extends _i1.Mock implements _i3.AppProvider {
   _i7.Future<void> addExpense(
     String? name,
     String? category,
-    double? amount,
+    int? categoryId,
+    String? amount,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -253,6 +260,7 @@ class MockAppProvider extends _i1.Mock implements _i3.AppProvider {
           [
             name,
             category,
+            categoryId,
             amount,
           ],
         ),
@@ -274,6 +282,26 @@ class MockAppProvider extends _i1.Mock implements _i3.AppProvider {
   _i7.Future<void> loadThemeMode() => (super.noSuchMethod(
         Invocation.method(
           #loadThemeMode,
+          [],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> toggleBiometric() => (super.noSuchMethod(
+        Invocation.method(
+          #toggleBiometric,
+          [],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> getIsBiometricEnabled() => (super.noSuchMethod(
+        Invocation.method(
+          #getIsBiometricEnabled,
           [],
         ),
         returnValue: _i7.Future<void>.value(),

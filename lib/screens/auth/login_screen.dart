@@ -76,34 +76,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your password';
                         }
-                        // if (value.length < 3) {
-                        //   return 'Password must be at least 3 characters long';
-                        // }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters long';
+                        }
                         return null;
                       },
                     ),
                     const SizedBox(height: 24),
                     Center(
                       child: ElevatedButton(
-                          onPressed: appProvider.isLoading ? null : () async {
-                          if (_formKey.currentState?.validate() ?? false) {
-                            await appProvider.login(
-                              _emailController.text,
-                              _passwordController.text,
-                            );
-                            if (appProvider.errorMessage == null) {
-                              if (context.mounted) {
-                                context.go('/dashboard');
-                              }
-                            } else {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(appProvider.errorMessage!)),
-                                );
-                              }
-                            }
-                          }
-                        },
+                          onPressed: appProvider.isLoading ? 
+                            null : 
+                            () async {
+                            await handleOnPress(appProvider, context);
+                          },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colorScheme.primary,
                           foregroundColor: colorScheme.onPrimary,
@@ -148,5 +134,25 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> handleOnPress(AppProvider appProvider, BuildContext context) async {
+    if (_formKey.currentState?.validate() ?? false) {
+      await appProvider.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+      if (appProvider.errorMessage == null) {
+        if (context.mounted) {
+          context.go('/dashboard');
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(appProvider.errorMessage!)),
+          );
+        }
+      }
+    }
   }
 }

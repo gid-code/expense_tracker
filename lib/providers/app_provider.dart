@@ -183,6 +183,7 @@ class AppProvider with ChangeNotifier {
       
       _incomeItems = results[0] as List<IncomeItem>;
       _expenditureItems = results[1] as List<ExpenditureItem>;
+      print(_expenditureItems);
     } catch (e) {
       _errorMessage = 'Failed to fetch finance data: ${e.toString()}';
     } finally {
@@ -241,7 +242,7 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addExpense(String name, String? category, int? categoryId, String amount) async {
+  Future<void> addExpense(String name, String category, double amount) async {
     if (_token == null) {
       _errorMessage = 'Not authenticated';
       notifyListeners();
@@ -253,7 +254,7 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      await _apiService.addExpense(name, category,categoryId, amount);
+      await _apiService.addExpense(name, category, amount.toStringAsFixed(2));
       await fetchExpenditure();
       notifyListeners();
     } catch (e) {

@@ -25,7 +25,7 @@ ExpenditureItem _$ExpenditureItemFromJson(Map<String, dynamic> json) =>
       category: json['category'] == null
           ? null
           : Category.fromJson(json['category'] as Map<String, dynamic>),
-      nameOfItem: json['name_of_item'] as String?,
+      nameOfItem: json['name_of_expense'] as String?,
       estimatedAmount: (json['amount'] as num?)?.toDouble(),
       user: (json['user_id'] as num?)?.toInt(),
     );

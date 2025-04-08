@@ -3,14 +3,15 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i5;
 
-import 'package:expense_tracker/models/auth_models.dart' as _i2;
-import 'package:expense_tracker/models/expenditure_item.dart' as _i6;
-import 'package:expense_tracker/models/income_item.dart' as _i5;
-import 'package:expense_tracker/network/services/apiservice.dart' as _i3;
+import 'package:expense_tracker/models/auth_models.dart' as _i3;
+import 'package:expense_tracker/models/expenditure_item.dart' as _i7;
+import 'package:expense_tracker/models/income_item.dart' as _i6;
+import 'package:expense_tracker/network/services/apiservice.dart' as _i4;
+import 'package:http_interceptor/http/intercepted_client.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i7;
+import 'package:mockito/src/dummies.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,8 +26,9 @@ import 'package:mockito/src/dummies.dart' as _i7;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeLoginResponse_0 extends _i1.SmartFake implements _i2.LoginResponse {
-  _FakeLoginResponse_0(
+class _FakeInterceptedClient_0 extends _i1.SmartFake
+    implements _i2.InterceptedClient {
+  _FakeInterceptedClient_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -35,9 +37,8 @@ class _FakeLoginResponse_0 extends _i1.SmartFake implements _i2.LoginResponse {
         );
 }
 
-class _FakeSignupResponse_1 extends _i1.SmartFake
-    implements _i2.SignupResponse {
-  _FakeSignupResponse_1(
+class _FakeLoginResponse_1 extends _i1.SmartFake implements _i3.LoginResponse {
+  _FakeLoginResponse_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -46,8 +47,19 @@ class _FakeSignupResponse_1 extends _i1.SmartFake
         );
 }
 
-class _FakeUserProfile_2 extends _i1.SmartFake implements _i2.UserProfile {
-  _FakeUserProfile_2(
+class _FakeSignupResponse_2 extends _i1.SmartFake
+    implements _i3.SignupResponse {
+  _FakeSignupResponse_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeUserProfile_3 extends _i1.SmartFake implements _i3.UserProfile {
+  _FakeUserProfile_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -59,13 +71,22 @@ class _FakeUserProfile_2 extends _i1.SmartFake implements _i2.UserProfile {
 /// A class which mocks [ApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i3.ApiService {
+class MockApiService extends _i1.Mock implements _i4.ApiService {
   MockApiService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.Future<_i2.LoginResponse> login(
+  _i2.InterceptedClient get httpClient => (super.noSuchMethod(
+        Invocation.getter(#httpClient),
+        returnValue: _FakeInterceptedClient_0(
+          this,
+          Invocation.getter(#httpClient),
+        ),
+      ) as _i2.InterceptedClient);
+
+  @override
+  _i5.Future<_i3.LoginResponse> login(
     String? email,
     String? password,
   ) =>
@@ -77,7 +98,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             password,
           ],
         ),
-        returnValue: _i4.Future<_i2.LoginResponse>.value(_FakeLoginResponse_0(
+        returnValue: _i5.Future<_i3.LoginResponse>.value(_FakeLoginResponse_1(
           this,
           Invocation.method(
             #login,
@@ -87,10 +108,10 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             ],
           ),
         )),
-      ) as _i4.Future<_i2.LoginResponse>);
+      ) as _i5.Future<_i3.LoginResponse>);
 
   @override
-  _i4.Future<_i2.SignupResponse> signup(
+  _i5.Future<_i3.SignupResponse> signup(
     String? name,
     String? email,
     String? password,
@@ -104,7 +125,7 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             password,
           ],
         ),
-        returnValue: _i4.Future<_i2.SignupResponse>.value(_FakeSignupResponse_1(
+        returnValue: _i5.Future<_i3.SignupResponse>.value(_FakeSignupResponse_2(
           this,
           Invocation.method(
             #signup,
@@ -115,91 +136,85 @@ class MockApiService extends _i1.Mock implements _i3.ApiService {
             ],
           ),
         )),
-      ) as _i4.Future<_i2.SignupResponse>);
+      ) as _i5.Future<_i3.SignupResponse>);
 
   @override
-  _i4.Future<List<_i5.IncomeItem>> getIncome(String? accessToken) =>
-      (super.noSuchMethod(
+  _i5.Future<List<_i6.IncomeItem>> getIncome() => (super.noSuchMethod(
         Invocation.method(
           #getIncome,
-          [accessToken],
+          [],
         ),
-        returnValue: _i4.Future<List<_i5.IncomeItem>>.value(<_i5.IncomeItem>[]),
-      ) as _i4.Future<List<_i5.IncomeItem>>);
+        returnValue: _i5.Future<List<_i6.IncomeItem>>.value(<_i6.IncomeItem>[]),
+      ) as _i5.Future<List<_i6.IncomeItem>>);
 
   @override
-  _i4.Future<List<_i6.ExpenditureItem>> getExpenditure(String? accessToken) =>
-      (super.noSuchMethod(
+  _i5.Future<List<_i7.ExpenditureItem>> getExpenditure() => (super.noSuchMethod(
         Invocation.method(
           #getExpenditure,
-          [accessToken],
+          [],
         ),
-        returnValue: _i4.Future<List<_i6.ExpenditureItem>>.value(
-            <_i6.ExpenditureItem>[]),
-      ) as _i4.Future<List<_i6.ExpenditureItem>>);
+        returnValue: _i5.Future<List<_i7.ExpenditureItem>>.value(
+            <_i7.ExpenditureItem>[]),
+      ) as _i5.Future<List<_i7.ExpenditureItem>>);
 
   @override
-  _i4.Future<String> addIncome(
-    String? accessToken,
+  _i5.Future<String> addIncome(
     String? name,
-    double? amount,
+    String? amount,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #addIncome,
           [
-            accessToken,
             name,
             amount,
           ],
         ),
-        returnValue: _i4.Future<String>.value(_i7.dummyValue<String>(
+        returnValue: _i5.Future<String>.value(_i8.dummyValue<String>(
           this,
           Invocation.method(
             #addIncome,
             [
-              accessToken,
               name,
               amount,
             ],
           ),
         )),
-      ) as _i4.Future<String>);
+      ) as _i5.Future<String>);
 
   @override
-  _i4.Future<void> addExpense(
-    String? accessToken,
+  _i5.Future<void> addExpense(
     String? name,
     String? category,
-    double? amount,
+    int? categoryId,
+    String? amount,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #addExpense,
           [
-            accessToken,
             name,
             category,
+            categoryId,
             amount,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i4.Future<_i2.UserProfile> getUserProfile(String? accessToken) =>
-      (super.noSuchMethod(
+  _i5.Future<_i3.UserProfile> getUserProfile() => (super.noSuchMethod(
         Invocation.method(
           #getUserProfile,
-          [accessToken],
+          [],
         ),
-        returnValue: _i4.Future<_i2.UserProfile>.value(_FakeUserProfile_2(
+        returnValue: _i5.Future<_i3.UserProfile>.value(_FakeUserProfile_3(
           this,
           Invocation.method(
             #getUserProfile,
-            [accessToken],
+            [],
           ),
         )),
-      ) as _i4.Future<_i2.UserProfile>);
+      ) as _i5.Future<_i3.UserProfile>);
 }

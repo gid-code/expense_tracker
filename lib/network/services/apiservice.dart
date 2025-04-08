@@ -4,8 +4,6 @@ import 'package:expense_tracker/models/income_item.dart';
 import 'package:expense_tracker/network/interceptors/authentication_interceptor.dart';
 import 'package:expense_tracker/network/interceptors/defalut_headers_interceptor.dart';
 import 'package:expense_tracker/network/interceptors/network_status_interceptor.dart';
-import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:http_interceptor/http/intercepted_client.dart';
@@ -84,6 +82,7 @@ class ApiService {
       Uri.parse('$baseUrl/user/expense'),
     );
     
+    print(response.body);
     if (response.statusCode == 200) {
       final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
       return expenditureResponse.data ?? [];
@@ -111,20 +110,20 @@ class ApiService {
     }
   }
 
-  Future<void> addExpense(String name, String? category, int? categoryId, String amount) async {
+  Future<void> addExpense(String name, String category, String amount) async {
     final url = Uri.parse('$baseUrl/user/expense');
     final response = await httpClient.post(
       url,
       body: json.encode({
         'name_of_expense': name,
         'category': category,
-        'category_id': categoryId,
         'amount': amount,
       }),
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Failed to add expense');
+      print('Error: ${response}');
+      throw Exception('Failed to add expense: ${response.body}');
     }
   }
 

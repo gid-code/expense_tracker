@@ -1,6 +1,6 @@
 import 'package:expense_tracker/models/expenditure_item.dart';
 import 'package:expense_tracker/providers/app_provider.dart';
-import 'package:expense_tracker/screens/home/expenses_screen.dart';
+import 'package:expense_tracker/screens/home/expense/expenses_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
