@@ -131,10 +131,11 @@ class ExpensesList extends StatelessWidget {
 
 
   List<Map<String, dynamic>> groupExpensesByCategory(List<ExpenditureItem> expenses) {
+    
     final groupedExpenses = <String, List<ExpenditureItem>>{};
     for (var expense in expenses) {
       final category = expense.category?.name ?? 'Uncategorized';
-      groupedExpenses[category]?.add(expense);
+      groupedExpenses.containsKey(category) ? groupedExpenses[category]!.add(expense) : groupedExpenses.addAll({category: <ExpenditureItem>[expense]});
     }
 
     

@@ -112,7 +112,6 @@ class AppProvider with ChangeNotifier {
   Future<void> loadToken() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('access_token');
-    print("token from loadtoken: $_token");
     notifyListeners();
   }
 
@@ -183,7 +182,6 @@ class AppProvider with ChangeNotifier {
       
       _incomeItems = results[0] as List<IncomeItem>;
       _expenditureItems = results[1] as List<ExpenditureItem>;
-      print(_expenditureItems);
     } catch (e) {
       _errorMessage = 'Failed to fetch finance data: ${e.toString()}';
     } finally {
@@ -209,6 +207,7 @@ class AppProvider with ChangeNotifier {
     try {
       await loadToken();
       if (_token != null) {
+        await getUserProfile();
         await fetchAllFinanceData();
       }
     } catch (e) {

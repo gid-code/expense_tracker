@@ -12,9 +12,6 @@ class ApiService {
   // static const String baseUrl = 'https://personal-expense-tracker.myladder.africa';
   static const String baseUrl = 'https://spendwise.up.railway.app/api';
 
-
-  // final BuildContext context;
-
   ApiService();
 
   InterceptedClient get httpClient => InterceptedClient.build(
@@ -82,7 +79,6 @@ class ApiService {
       Uri.parse('$baseUrl/user/expense'),
     );
     
-    print(response.body);
     if (response.statusCode == 200) {
       final expenditureResponse = ExpenditureResponse.fromJson(jsonDecode(response.body));
       return expenditureResponse.data ?? [];
@@ -122,7 +118,6 @@ class ApiService {
     );
 
     if (response.statusCode != 201) {
-      print('Error: ${response}');
       throw Exception('Failed to add expense: ${response.body}');
     }
   }
@@ -132,6 +127,7 @@ class ApiService {
       Uri.parse('$baseUrl/user'),
     );
 
+    // print(response.body);
     if (response.statusCode == 200) {
       return UserProfile.fromJson(jsonDecode(response.body));
     } else {
