@@ -14,9 +14,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<AppProvider>().fetchAllFinanceData();
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().fetchAllFinanceData();
+    });
   }
 
   @override

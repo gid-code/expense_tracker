@@ -22,11 +22,14 @@ class NotificationsScreen extends StatelessWidget {
             color: colorScheme.secondary.withOpacity(0.7),
           ),
           const SizedBox(height: 16,),
-          Text("No notifications available at the moment",
-            style: textTheme.titleLarge?.copyWith(
-              color: colorScheme.onSurface.withOpacity(0.7)
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Text("No notifications available at the moment",
+              style: textTheme.titleLarge?.copyWith(
+                color: colorScheme.onSurface.withOpacity(0.7)
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           )
         ],
       ),

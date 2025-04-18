@@ -4,34 +4,41 @@ import 'package:expense_tracker/models/income_item.dart';
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/network/services/apiservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:meta/meta.dart';
 
 class AppProvider with ChangeNotifier {
-  static AppProvider? _instance;
-  static AppProvider get instance => _instance!;
-  final ApiService _apiService;
-  // final BuildContext context;
-  bool _isLoading = false;
-  String? _errorMessage;
-  String? _token;
-  List<IncomeItem> _incomeItems = [];
-  List<ExpenditureItem> _expenditureItems = [];
-  UserProfile _userProfile = UserProfile(name: 'John Doe', email: 'johndoe@example.com');
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  String? get token => _token;
-  List<IncomeItem> get incomeItems => _incomeItems;
-  List<ExpenditureItem> get expenditureItems => _expenditureItems;
-  UserProfile get userProfile => _userProfile;
-
-
-  // AppProvider._(this.context) : _apiService = ApiService(context);
   factory AppProvider() {
     _instance ??= AppProvider._();
     return _instance!;
   }
 
   AppProvider._() : _apiService = ApiService();
+
+  static AppProvider? _instance;
+
+  final ApiService _apiService;
+  String? _errorMessage;
+  List<ExpenditureItem> _expenditureItems = [];
+  List<IncomeItem> _incomeItems = [];
+  bool _isBiometricEnabled = false;
+  bool _isLoading = false;
+
+  ThemeMode _themeMode = ThemeMode.system;
+  String? _token;
+  UserProfile _userProfile = UserProfile(name: 'John Doe', email: 'johndoe@example.com');
+
+  static AppProvider get instance => _instance!;
+
+  bool get isLoading => _isLoading;
+
+  String? get errorMessage => _errorMessage;
+
+  String? get token => _token;
+
+  List<IncomeItem> get incomeItems => _incomeItems;
+
+  List<ExpenditureItem> get expenditureItems => _expenditureItems;
+
+  UserProfile get userProfile => _userProfile;
 
   // @visibleForTesting
   // AppProvider.withApiService(this._apiService, this.context);
@@ -102,11 +109,6 @@ class AppProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  Future<void> _saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('access_token', token);
   }
 
   Future<void> loadToken() async {
@@ -191,7 +193,9 @@ class AppProvider with ChangeNotifier {
   }
 
   double get totalIncome => _incomeItems.fold(0.0, (sum, item) => sum + (item.amount ?? 0));
+
   double get totalExpenditure => _expenditureItems.fold(0.0, (sum, item) => sum + (item.estimatedAmount ?? 0));
+
   double get balance => totalIncome - totalExpenditure;
 
   void clearFinanceData() {
@@ -264,7 +268,6 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  ThemeMode _themeMode = ThemeMode.system;
   ThemeMode get themeMode => _themeMode;
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -287,12 +290,6 @@ class AppProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _saveThemeMode(ThemeMode mode) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('theme_mode', mode.toString());
-  }
-
-  bool _isBiometricEnabled = false;
   bool get isBiometricEnabled => _isBiometricEnabled;
 
   Future<void> toggleBiometric() async{
@@ -306,6 +303,16 @@ class AppProvider with ChangeNotifier {
     final isEnabled = prefs.getBool('is_biometric_enabled');
     _isBiometricEnabled = isEnabled ?? false;
     notifyListeners();
+  }
+
+  Future<void> _saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', token);
+  }
+
+  Future<void> _saveThemeMode(ThemeMode mode) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme_mode', mode.toString());
   }
 
   Future<void> _saveEnableBiometric(bool value) async {

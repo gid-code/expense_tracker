@@ -74,14 +74,19 @@ class SettingsScreen extends StatelessWidget {
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: () {
-        if (title == 'Account Information') {
-          context.go('/settings/account-information');
-        }
-        if (title == 'Appearance') {
-          context.go('/settings/appearance');
-        }
-        if ( title == 'Security') {
-          context.go('/settings/security');
+        switch (title) {
+          case 'Account Information':
+            context.go('/settings/account-information');
+            break;
+          case 'Appearance':
+            context.go('/settings/appearance');
+            break;
+          case 'Security':
+            context.go('/settings/security');
+            break;
+          case 'Notifications':
+            context.go('/settings/notifications');
+            break;
         }
         
         

@@ -6,7 +6,9 @@ import 'package:expense_tracker/screens/home/expense/expenses_screen.dart';
 import 'package:expense_tracker/screens/home/home_shell.dart';
 import 'package:expense_tracker/screens/home/settings/appearance_screen.dart';
 import 'package:expense_tracker/screens/home/settings/settings_screen.dart';
-import 'package:expense_tracker/screens/home/settings/account_information_screen.dart'; // Add this import
+import 'package:expense_tracker/screens/home/settings/account_information_screen.dart';
+import 'package:expense_tracker/screens/home/settings/notifications_screen.dart';
+import 'package:expense_tracker/screens/home/settings/security_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:expense_tracker/screens/auth/login_screen.dart';  
@@ -74,6 +76,18 @@ final GoRouter router = GoRouter(
               path: 'appearance',
               builder: (BuildContext context, GoRouterState state) {
                 return const AppearanceScreen();
+              },
+            ),
+            GoRoute(
+              path: 'notifications',
+              builder: (BuildContext context, GoRouterState state) {
+                return const NotificationsScreen();
+              },
+            ),
+            GoRoute(
+              path: 'security',
+              builder: (BuildContext context, GoRouterState state) {
+                return const SecurityScreen();
               },
             ),
           ],
