@@ -19,7 +19,7 @@ Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
 
 LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
     LoginResponse(
-      accessToken: json['accessToken'] as String,
+      accessToken: json['access_token'] as String,
       expiresIn: (json['expiresIn'] as num).toInt(),
     );
 
